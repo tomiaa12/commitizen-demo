@@ -3,6 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 const msgFile = process.argv[2];
+console.log(msgFile,'msgFile')
+return
 if (!msgFile) process.exit(0);
 
 let content = fs.readFileSync(msgFile, 'utf8').split(/\r?\n/);
