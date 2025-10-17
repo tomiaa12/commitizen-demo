@@ -10,15 +10,14 @@ module.exports = {
     { value: "revert", name: "revert:   ⏪ 回退" },
   ],
   scopes: [],
-  allowCustomScopes: false,
-  allowBreakingChanges: ["feat", "fix"],
+  // allowCustomScopes: false,
+  // allowBreakingChanges: ["feat", "fix"],
   messages: {
-    type: "请选择提交类型：",
-    // 把 ID 放到 footer（我们会在 prepare 钩子里处理）
-    footer: "请输入飞书的 需求/bug ID（可选，只填写数字，直接回车跳过）：\n",
-    subject: "请填写提交标题（必填）：\n",
-    confirmCommit: "确认提交？(y/n)",
+    type: "选择提交类型（上下键选择，回车确认）：",
+    issues: "填写 issue id（只填数字，例如 17288）：",
+    subject: "填写简短描述（不要带句号）：",
+    confirmCommit: "下面是将要提交的信息，确认吗？",
   },
   // 跳过 body 等不必要的项
-  skipQuestions: ["scope","body", "breaking"],
+  skipQuestions: ["scope", "body", "breaking"],
 };

@@ -3,4 +3,4 @@
 
 yarn commitlint --edit $1
 
-node ./scripts/format-commit.js "$1" "$2"
+# node ./scripts/format-commit.js "$1" "$2"
