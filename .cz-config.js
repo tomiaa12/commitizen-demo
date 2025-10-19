@@ -10,6 +10,7 @@ module.exports = {
     { value: "revert", name: "revert:   ⏪ 回退" },
   ],
   scopes: [],
+  allowTicketNumber: true,
   // allowCustomScopes: false,
   // allowBreakingChanges: ["feat", "fix"],
   messages: {
