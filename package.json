@@ -2,9 +2,10 @@
   "name": "commitizen-demo",
   "scripts": {
     "prepare": "husky install",
-    "commit": "git-cz",
+    "commit-old": "git-cz",
     "commitlint": "commitlint",
     "gz": "node ./scripts/commit.js",
+    "postinstall": "git config --local alias.gz \"!node ./scripts/commit.js\"",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "config": {
