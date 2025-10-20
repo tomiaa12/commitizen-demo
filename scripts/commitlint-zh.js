@@ -1,22 +1,19 @@
-#!/usr/bin/env node
-// scripts/commitlint-zh.js
-// 用法: node ./scripts/commitlint-zh.js .git/COMMIT_EDITMSG
-
 const { spawnSync } = require('child_process');
+const pathLib = require('path');
 const path = process.argv[2] || '.git/COMMIT_EDITMSG';
 
-// 用 npx 调用本地的 commitlint，兼容性强
-const res = spawnSync('npx', ['commitlint', '--edit', path], { encoding: 'utf8' });
+const commitlintPath = process.platform === 'win32'
+  ? pathLib.join('node_modules', '.bin', 'commitlint.cmd')
+  : pathLib.join('node_modules', '.bin', 'commitlint');
 
-// 合并 stdout/stderr 以便翻译全部信息
+const res = spawnSync(commitlintPath, ['--edit', path], { encoding: 'utf8' });
+
 const raw = (res.stdout || '') + (res.stderr || '');
 
 if (res.status === 0) {
-  // 校验通过，直接退出成功
   process.exit(0);
 }
 
-// 翻译表：按需扩展
 const translations = [
   [/input:/gi, '输入：'],
   [/subject may not be empty/gi, '提交说明（subject）不能为空'],
@@ -28,7 +25,7 @@ const translations = [
   [/found (\d+) problems/gi, '发现 $1 个问题'],
   [/found (\d+) warnings/gi, '发现 $1 个警告'],
   [/.*Get help:.*\n?/gi, (m) => m.replace(/Get help:/i, '获取帮助：')],
-  [/✖/g, '✖'], // 保持符号（根据需要可改）
+  [/✖/g, '✖'], 
   [/⧗\s+input:/g, '⧗ 输入：'],
 ];
 

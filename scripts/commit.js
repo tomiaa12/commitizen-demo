@@ -9,6 +9,7 @@ function runCmd(cmd, args = [], options = {}) {
   return res;
 }
 
+
 function runCmdCapture(cmd, args = []) {
   // 捕获输出，不抛出（用于判断）
   try {
@@ -20,7 +21,6 @@ function runCmdCapture(cmd, args = []) {
 
 (async () => {
   try {
-    // 1. 选择 type（只显示 feat / fix）
     const { type } = await inquirer.prompt([
       {
         name: 'type',
