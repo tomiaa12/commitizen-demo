@@ -72,10 +72,10 @@ if (allowedPrefixes.length > 0) {
     )} 开头）。`;
     console.error(msg);
     try {
-      console.error(`${msgPrefix}正在回退到 "${previous}"`);
+      console.error(`${msgPrefix}正在切换到 "${previous}"`);
       safeExec(`git checkout ${previous}`);
     } catch (e) {
-      console.error(`${msgPrefix}回退失败: ${e.message || e}`);
+      console.error(`${msgPrefix}切换失败: ${e.message || e}`);
     }
     process.exit(1);
   }
@@ -86,13 +86,13 @@ const fromEnv = forbidFrom.some(
   (env) => previous === env || previous.includes(env)
 );
 if (fromEnv) {
-  const msg = `${msgPrefix}拒绝：新分支 "${current}" 来自受限环境分支 "${previous}"（不允许从环境分支派生新分支）。`;
+  const msg = `${msgPrefix}拒绝：新分支 "${current}" 来自受限环境分支 "${previous}"（不允许从环境分支派生新分支）。`; 
   console.error(msg);
   try {
-    console.error(`${msgPrefix}正在回退到 "${previous}"`);
+    console.error(`${msgPrefix}正在切换到 "${previous}"`);
     safeExec(`git checkout ${previous}`);
   } catch (e) {
-    console.error(`${msgPrefix}回退失败: ${e.message || e}`);
+    console.error(`${msgPrefix}切换失败: ${e.message || e}`);
   }
   process.exit(1);
 }
