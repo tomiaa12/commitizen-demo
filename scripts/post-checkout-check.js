@@ -20,7 +20,6 @@ const cfg = loadConfig();
 const forbidCreation = cfg.forbidBranchCreation || [];
 const envBranches = cfg.envBranches || [];
 const msgPrefix = cfg.messagePrefix || "[git-gz] ";
-const allowedPrefixes = cfg.allowedBranchPrefixes || [];
 
 const args = process.argv.slice(2);
 const oldRef = args[0] || "";
@@ -74,24 +73,6 @@ if (isCurrentEnv) {
 }
 
 // 到这里：很可能是"新建分支然后切换"场景 —— 我们需要校验命名与来源
-
-// 1) 校验命名前缀（如果配置了 allowedPrefixes）
-if (allowedPrefixes.length > 0) {
-  const okPrefix = allowedPrefixes.some((p) => current.startsWith(p));
-  if (!okPrefix) {
-    const msg = `${msgPrefix}拒绝：新分支 "${current}" 命名不符合规范（必须以 ${allowedPrefixes.join(
-      ", "
-    )} 开头）。`;
-    console.error(msg);
-    try {
-      console.error(`${msgPrefix}正在切换到 "${previous}"`);
-      safeExec(`git checkout ${previous}`);
-    } catch (e) {
-      console.error(`${msgPrefix}切换失败: ${e.message || e}`);
-    }
-    process.exit(1);
-  }
-}
 
 // 2) 检查 forbidBranchCreation 规则
 // 遍历规则，检查是否有匹配的禁止规则
