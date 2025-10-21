@@ -19,6 +19,7 @@ module.exports = {
     subject: "填写简短描述（不要带句号）：",
     confirmCommit: "下面是将要提交的信息，确认吗？",
   },
-  // 跳过 body 等不必要的项
+  // 跳过 body 等不必要的项 
+
   skipQuestions: ["scope", "body", "breaking"],
 };
