@@ -15,6 +15,7 @@ function safeExec(cmd) {
   }
 }
 
+
 const cfg = loadConfig();
 const forbidFrom = cfg.forbidBranchFromEnv || []; // e.g. ['sit','uat']
 const msgPrefix = cfg.messagePrefix || '[git-gz] ';
