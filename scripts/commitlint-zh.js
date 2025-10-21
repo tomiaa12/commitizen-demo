@@ -18,6 +18,7 @@ const translations = [
   [/input:/gi, '输入：'],
   [/subject may not be empty/gi, '提交说明（subject）不能为空'],
   [/type may not be empty/gi, '提交类型（type）不能为空'],
+  [/type must be one of/gi, '提交类型只能选择'],
   [/body may not be empty/gi, '正文（body）不能为空'],
   [/footer may not be empty/gi, '页脚（footer）不能为空'],
   [/header may not be empty/gi, '头部（header）不能为空'],

@@ -23,5 +23,5 @@ module.exports = {
   bypassUsers: ["ci-bot@example.com"],
 
   // 其他提示
-  messagePrefix: "[git-policy] ",
+  messagePrefix: "[git-gz] ",
 };
