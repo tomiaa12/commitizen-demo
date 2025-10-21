@@ -3,22 +3,28 @@ module.exports = {
   // 不能被直接 push 的目标分支（不能把本地改动直接 push 到这些远端分支）
   forbidDirectPush: ["release"],
 
+  // 允许的分支名前缀（如果 branch 名不以这些前缀开始，则禁止 push）
+  allowedBranchPrefixes: ["feat/", "hotfix/", "bugfix/", "fix/"],
+
   // 禁止合并规则：数组项每项是 { from: [srcPatterns], to: [dstPatterns] }
   // 当本地试图把源分支 from 合并到目标分支 to 时会被阻止
-  // 支持在数组中放多个源或目标关键字（精确匹配或包含匹配）
   forbidMerges: [
     // { from: ["uat"], to: ["develop","main"] } // 示例
 
-    { from: ['sit'], to: [/.*/] }, // sit 禁合并到所有分支
-    { from: ['uat','gray'], to: [/^((?!.*(uat|gray)$).*)$/] } // uat/gray 只能合并到以 uat/gray 结尾的分支，这里示例为“非以 uat/gray 结尾则禁止”
+    { from: ["sit"], to: [/.*/] }, // sit 禁合并到所有分支
+    { from: ["uat", "gray"], to: [/^((?!.*(uat|gray)$).*)$/] }, // uat/gray 只能合并到以 uat/gray 结尾的分支，这里示例为“非以 uat/gray 结尾则禁止”
   ],
 
   // 禁止从哪些分支直接被 checkout -b（派生新分支）
-  forbidBranchFromEnv: ["sit", "uat"],
+  // 规则数组，每项是 { from: [源分支模式], newBranch: [新分支名模式] }
+  // 当从 from 中的分支尝试创建符合 newBranch 模式的新分支时会被阻止
+  forbidBranchCreation: [
+    { from: ["sit"], newBranch: [/.*/] }, // sit 不允许派生任何新分支
+    { from: ["uat", "gray"], newBranch: [/^((?!.*(uat|gray)$).*)$/] }, // uat/gray 只能派生以 uat/gray 结尾的分支
+  ],
 
-  // 允许的分支名前缀（如果 branch 名不以这些前缀开始，则禁止 push）
-  // 空则表示不强制命名规范
-  allowedBranchPrefixes: ["feat/", "hotfix/", "bugfix/", "fix/"],
+  // 环境分支列表（这些分支本身不受规则限制，可以直接切换）
+  envBranches: ["sit", "uat", "gray", "release"],
 
   // 其他提示
   messagePrefix: "[git gz] ",

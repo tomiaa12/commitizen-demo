@@ -25,9 +25,8 @@ function branchFromRef(ref) {
 
 if (allowedPrefixes && allowedPrefixes.length > 0) {
   const ok = allowedPrefixes.some((p) => currentBranch.startsWith(p));
-  const envExemptions = (cfg.forbidDirectPush || []).concat(
-    cfg.forbidBranchFromEnv || []
-  );
+  const envBranches = cfg.envBranches || [];
+  const envExemptions = (cfg.forbidDirectPush || []).concat(envBranches);
   const isEnv = envExemptions.some((k) => currentBranch.includes(k));
   if (!ok && !isEnv) {
     console.error(
@@ -50,7 +49,7 @@ for (const line of lines) {
     forbidDirectPush.some((b) => remoteBranch === b || remoteBranch.includes(b))
   ) {
     console.error(
-      `${msgPrefix}拒绝推送：禁止直接 push 到受保护分支 '${remoteBranch}'。请使用 PR/MR 流程。`
+      `${msgPrefix}拒绝推送：禁止直接 push 到受保护分支 '${remoteBranch}'。请使用 PR 流程。`
     );
     process.exit(1);
   }
