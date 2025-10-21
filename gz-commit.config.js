@@ -20,7 +20,7 @@ module.exports = {
   allowedBranchPrefixes: ["feat/", "hotfix/", "bugfix/", "fix/"],
 
   // 可选：允许绕过检测的用户名或邮箱（例如 CI 账号或管理员）
-  bypassUsers: ["ci-bot@example.com"],
+  bypassUsers: [],
 
   // 其他提示
   messagePrefix: "[git gz] ",
