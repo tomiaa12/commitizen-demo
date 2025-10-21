@@ -2,10 +2,30 @@ const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
 
-function loadConfig() {
-  const p = path.resolve(process.cwd(), "gz-commit.config.js");
-  if (fs.existsSync(p)) return require(p);
-  return {};
+function repoRoot() {
+  try {
+    return execSync("git rev-parse --show-toplevel", {
+      encoding: "utf8",
+    }).trim();
+  } catch {
+    return process.cwd();
+  }
+}
+
+const root = repoRoot();
+const cfgPath = path.join(root, "gz-commit.config.js");
+
+let cfg = {};
+if (fs.existsSync(cfgPath)) {
+  try {
+    cfg = require(cfgPath);
+  } catch (e) {
+    console.error("[git-gz] 读取 gz-commit.config.js 出错：", e.message);
+  }
+} else {
+  console.warn(
+    "[git-gz] 未找到 gz-commit.config.js，将使用默认或跳过特定检查。"
+  );
 }
 
 function safeExec(cmd) {
@@ -16,7 +36,6 @@ function safeExec(cmd) {
   }
 }
 
-const cfg = loadConfig();
 const msgPrefix = cfg.messagePrefix || "[git-gz] ";
 const forbidMerges = cfg.forbidMerges || [];
 
@@ -28,7 +47,7 @@ function getCurrentBranch() {
 function getSourceBranch() {
   // 从 reflog 中获取最近的 merge 操作信息
   const reflogEntry = safeExec("git reflog -1 --grep-reflog=merge");
-  
+
   if (reflogEntry) {
     // 格式类似: abc1234 HEAD@{0}: merge sit: Fast-forward
     // 或: abc1234 HEAD@{0}: merge sit: Merge made by the 'recursive' strategy.
@@ -37,7 +56,7 @@ function getSourceBranch() {
       return match[1].trim();
     }
   }
-  
+
   // 备用方案：尝试从 MERGE_HEAD 获取（非 fast-forward 合并）
   const mergeHeadPath = path.resolve(process.cwd(), ".git", "MERGE_HEAD");
   if (fs.existsSync(mergeHeadPath)) {
@@ -50,7 +69,7 @@ function getSourceBranch() {
       }
     }
   }
-  
+
   return "";
 }
 
@@ -134,7 +153,7 @@ function matchFromPattern(source, pattern) {
     if (fromMatch) {
       console.error(`${msgPrefix}拒绝合并：${msg}`);
       console.error(`${msgPrefix}正在回滚合并操作...`);
-      
+
       try {
         // 回滚到合并前的状态
         execSync("git reset --hard ORIG_HEAD", { stdio: "inherit" });
@@ -142,7 +161,7 @@ function matchFromPattern(source, pattern) {
       } catch (e) {
         console.error(`${msgPrefix}回滚失败: ${e.message || e}`);
       }
-      
+
       process.exit(1);
     }
   }
@@ -150,4 +169,3 @@ function matchFromPattern(source, pattern) {
   // 通过所有检查
   process.exit(0);
 })();
-

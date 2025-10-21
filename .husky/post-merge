@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-node ./scripts/post-merge-check.js "$@"
-
+# node "$(git rev-parse --show-toplevel)/node_modules/@tomiaa/git-gz/scripts/post-merge-check.js" "$@"

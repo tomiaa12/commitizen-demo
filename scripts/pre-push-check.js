@@ -1,17 +1,37 @@
 const fs = require("fs");
+const { execSync } = require("child_process");
 const { getCurrentBranch } = require("./getBranch");
 const path = require("path");
 
-function loadConfig() {
-  const p = path.resolve(process.cwd(), "gz-commit.config.js");
-  if (fs.existsSync(p)) return require(p);
-  return {};
+function repoRoot() {
+  try {
+    return execSync("git rev-parse --show-toplevel", {
+      encoding: "utf8",
+    }).trim();
+  } catch {
+    return process.cwd();
+  }
+}
+
+const root = repoRoot();
+const cfgPath = path.join(root, "gz-commit.config.js");
+
+let cfg = {};
+if (fs.existsSync(cfgPath)) {
+  try {
+    cfg = require(cfgPath);
+  } catch (e) {
+    console.error("[git-gz] 读取 gz-commit.config.js 出错：", e.message);
+  }
+} else {
+  console.warn(
+    "[git-gz] 未找到 gz-commit.config.js，将使用默认或跳过特定检查。"
+  );
 }
 
 const stdin = fs.readFileSync(0, "utf8").trim();
 const lines = stdin ? stdin.split("\n") : [];
 
-const cfg = loadConfig();
 const forbidDirectPush = cfg.forbidDirectPush || [];
 const allowedPrefixes = cfg.allowedBranchPrefixes || [];
 const msgPrefix = cfg.messagePrefix || '[git-gz] ';
