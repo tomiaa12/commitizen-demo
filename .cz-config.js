@@ -1,13 +1,16 @@
 module.exports = {
   types: [
-    { value: "feat", name: "feat:     ✨ 新功能" },
-    { value: "fix", name: "fix:      🐛 修复Bug" },
-    { value: "docs", name: "docs:     📚 文档变更" },
-    { value: "style", name: "style:    💅 代码格式调整" },
-    { value: "refactor", name: "refactor: ♻️ 重构" },
-    { value: "test", name: "test:     ✅ 添加测试" },
-    { value: "chore", name: "chore:    🧹 其他改动" },
-    { value: "revert", name: "revert:   ⏪ 回退" },
+    { name: "feat:     ✨ 新功能", value: "feat" },
+    { name: "fix:      🐛 修复Bug", value: "fix" },
+    { name: "perf:     ⚡️ 性能优化", value: "perf" },
+    { name: "docs:     📚 文档变更", value: "docs" },
+    { name: "style:    💄 样式调整", value: "style" },
+    { name: "refactor: ♻️ 重构", value: "refactor" },
+    { name: "test:     ✅ 添加测试", value: "test" },
+    { name: "build:    👷 构建", value: "build" },
+    { name: "ci:       🔧 配置", value: "ci" },
+    { name: "chore:    🧹 其他改动", value: "chore" },
+    { name: "revert:   ⏪ 回退", value: "revert" },
   ],
   scopes: [],
   allowTicketNumber: true,
@@ -19,7 +22,7 @@ module.exports = {
     subject: "填写简短描述（不要带句号）：",
     confirmCommit: "下面是将要提交的信息，确认吗？",
   },
-  // 跳过 body 等不必要的项 
+  // 跳过 body 等不必要的项
 
   skipQuestions: ["scope", "body", "breaking"],
 };
