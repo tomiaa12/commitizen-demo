@@ -1,53 +1,38 @@
 const fs = require("fs");
-const { execSync } = require("child_process");
 const path = require("path");
-
-const args = process.argv.slice(2);
-const oldRef = args[0] || "";
-const newRef = args[1] || "";
-const flag = args[2] || "";
-
-console.log("[post-checkout] args:", { oldRef, newRef, flag });
-
-// 你的后续逻辑：只有 flag === '1' 表示切换分支，按此前逻辑处理
-if (flag !== "1") {
-  // 非分支切换，直接退出
-  process.exit(0);
-}
+const { execSync } = require("child_process");
 
 function loadConfig() {
   const p = path.resolve(process.cwd(), "gz-commit.config.js");
   if (fs.existsSync(p)) return require(p);
   return {};
 }
-
-const cfg = loadConfig();
-const forbidMerges = cfg.forbidMerges || [];
-const msgPrefix = cfg.messagePrefix || "";
-
-function getCurrentBranch() {
+function safeExec(cmd) {
   try {
-    return execSync("git rev-parse --abbrev-ref HEAD", {
-      encoding: "utf8",
-    }).trim();
+    return execSync(cmd, { encoding: "utf8" }).trim();
   } catch {
     return "";
   }
 }
 
+const cfg = loadConfig();
+const msgPrefix = cfg.messagePrefix || "[git-gz] ";
+const forbidMerges = cfg.forbidMerges || [];
+
+function getCurrentBranch() {
+  return safeExec("git rev-parse --abbrev-ref HEAD") || "";
+}
 function getMergeHeads() {
-  const mergeHead = path.resolve(process.cwd(), ".git", "MERGE_HEAD");
-  if (!fs.existsSync(mergeHead)) return [];
-  const raw = fs.readFileSync(mergeHead, "utf8").trim();
+  const mergeHeadPath = path.resolve(process.cwd(), ".git", "MERGE_HEAD");
+  if (!fs.existsSync(mergeHeadPath)) return [];
+  const raw = fs.readFileSync(mergeHeadPath, "utf8").trim();
   return raw ? raw.split(/\s+/) : [];
 }
-
 function branchesContainingCommit(sha) {
   try {
     const out = execSync(`git branch --all --contains ${sha}`, {
       encoding: "utf8",
     });
-    // lines like: "  remotes/origin/feature/xxx" or "* main"
     return out
       .split("\n")
       .map((l) => l.replace(/^[\s\*\u2022]+/, "").trim())
@@ -60,44 +45,84 @@ function branchesContainingCommit(sha) {
   }
 }
 
-const current = getCurrentBranch();
-const mergeHeads = getMergeHeads();
-
-if (mergeHeads.length === 0) {
-  // 没有检测到 MERGE_HEAD，直接通过（非合并情形）
-  process.exit(0);
-}
-
-// 对每个被合并的 commit，尝试找到其分支名（首个匹配即用）
-let sourceBranches = new Set();
-for (const sha of mergeHeads) {
-  const bs = branchesContainingCommit(sha);
-  bs.forEach((b) => sourceBranches.add(b));
-}
-
-if (sourceBranches.size === 0) {
-  // 备选：尝试从 reflog 或 MERGE_MSG 解析
-  // 若无法识别来源，保守放行
-  process.exit(0);
-}
-
-const srcList = Array.from(sourceBranches);
-
-for (const rule of forbidMerges) {
-  const fromPatterns = rule.from || [];
-  const toPatterns = rule.to || [];
-  const toMatch = toPatterns.some((t) => current === t || current.includes(t));
-  if (!toMatch) continue;
-
-  // 若目标匹配，再看来源是否包含 fromPatterns
-  for (const s of srcList) {
-    if (fromPatterns.some((f) => s === f || s.includes(f))) {
-      console.error(
-        `${msgPrefix}拒绝合并：检测到试图将环境分支 '${s}' 合并到 '${current}'，此操作被策略禁止。请使用 PR/MR 并通过审批/CI。`
-      );
-      process.exit(1);
+// 匹配 toPattern：支持 RegExp 实例或字符串（字符串按精确或包含匹配）
+function matchToPattern(target, pattern) {
+  if (!pattern) return false;
+  // RegExp instance
+  if (Object.prototype.toString.call(pattern) === "[object RegExp]") {
+    try {
+      return pattern.test(target);
+    } catch {
+      return false;
     }
   }
+  // string: 精确或包含
+  if (typeof pattern === "string") {
+    if (target === pattern) return true;
+    return target.includes(pattern);
+  }
+  return false;
 }
 
-process.exit(0);
+// 匹配 fromPattern（保持原来行为：精确或包含）
+function matchFromPattern(source, pattern) {
+  if (!pattern) return false;
+  if (typeof pattern === "string") {
+    if (source === pattern) return true;
+    return source.includes(pattern);
+  }
+  // 若传入 RegExp 意外处理一把
+  if (Object.prototype.toString.call(pattern) === "[object RegExp]") {
+    try {
+      return pattern.test(source);
+    } catch {
+      return false;
+    }
+  }
+  return false;
+}
+
+// 主流程
+(function main() {
+  const target = getCurrentBranch();
+  if (!target) return process.exit(0);
+
+  const mergeHeads = getMergeHeads();
+  if (mergeHeads.length === 0) return process.exit(0);
+
+  // 收集来源分支
+  const srcSet = new Set();
+  for (const sha of mergeHeads) {
+    const bs = branchesContainingCommit(sha);
+    bs.forEach((b) => srcSet.add(b));
+  }
+  const srcList = Array.from(srcSet);
+  if (srcList.length === 0) return process.exit(0);
+
+  // 遍历规则
+  for (const rule of forbidMerges) {
+    const fromPatterns = rule.from || [];
+    const toPatterns = rule.to || [];
+
+    // 如果 toPatterns 为空，则不匹配任何目标（可改为匹配全部）
+    if (!toPatterns || toPatterns.length === 0) continue;
+
+    // 如果当前 target 匹配任一 toPattern，则继续检查来源
+    const toMatch = toPatterns.some((tp) => matchToPattern(target, tp));
+    if (!toMatch) continue;
+
+    // 如果 to 匹配，则检查来源是否匹配任一 fromPattern
+    for (const src of srcList) {
+      const fromMatch = fromPatterns.some((fp) => matchFromPattern(src, fp));
+      if (fromMatch) {
+        console.error(
+          `${msgPrefix}拒绝合并：检测到试图将来源分支 '${src}' 合并到目标分支 '${target}'。此操作被策略禁止。请使用 PR/MR 并通过审批/CI。`
+        );
+        process.exit(1);
+      }
+    }
+  }
+
+  // 通过所有检查
+  process.exit(0);
+})();

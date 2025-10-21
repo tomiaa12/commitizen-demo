@@ -7,8 +7,10 @@ module.exports = {
   // 当本地试图把源分支 from 合并到目标分支 to 时会被阻止
   // 支持在数组中放多个源或目标关键字（精确匹配或包含匹配）
   forbidMerges: [
-    { from: ["uat", "sit", "gray"], to: ["release"] },
     // { from: ["uat"], to: ["develop","main"] } // 示例
+
+    { from: ['sit'], to: [/.*/] }, // sit 禁合并到所有分支
+    { from: ['uat','gray'], to: [/^((?!.*(uat|gray)$).*)$/] } // uat/gray 只能合并到以 uat/gray 结尾的分支，这里示例为“非以 uat/gray 结尾则禁止”
   ],
 
   // 禁止从哪些分支直接被 checkout -b（派生新分支）
@@ -18,9 +20,6 @@ module.exports = {
   // 允许的分支名前缀（如果 branch 名不以这些前缀开始，则禁止 push）
   // 空则表示不强制命名规范
   allowedBranchPrefixes: ["feat/", "hotfix/", "bugfix/", "fix/"],
-
-  // 可选：允许绕过检测的用户名或邮箱（例如 CI 账号或管理员）
-  bypassUsers: [],
 
   // 其他提示
   messagePrefix: "[git gz] ",

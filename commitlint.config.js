@@ -9,5 +9,4 @@ module.exports = {
     // header 的最大长度（可选）
     'header-max-length': [2, 'always', 250]
   }
-  
 };

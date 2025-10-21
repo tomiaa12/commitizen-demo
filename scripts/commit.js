@@ -1,5 +1,5 @@
 const inquirer = require("inquirer");
-const { getCurrentBranch } = require("./getCurrentBranch");
+const { getCurrentBranch } = require("./getBranch");
 const { runCmdCapture, runCmd } = require("./run");
 
 // 根据分支名推断 type 默认值（只映射常见的几类）

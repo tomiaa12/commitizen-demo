@@ -1,7 +1,3 @@
-#!/usr/bin/env node
-// scripts/post-checkout-check.js
-// 修正版：区分切换到已有分支 / 新建分支，并在新建分支时强制命名前缀与来源限制
-
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -21,11 +17,10 @@ function safeExec(cmd) {
 
 const cfg = loadConfig();
 const forbidFrom = cfg.forbidBranchFromEnv || []; // e.g. ['sit','uat']
-const msgPrefix = cfg.messagePrefix || '[git-policy] ';
+const msgPrefix = cfg.messagePrefix || '[git-gz] ';
 const autoRollback = cfg.autoRollbackOnForbiddenBranchCreation === true; // false: 仅警告并阻止
 const allowedPrefixes = cfg.allowedBranchPrefixes || []; // 若配置命名规范
 
-// args: oldRef newRef flag
 const args = process.argv.slice(2);
 const oldRef = args[0] || '';
 const newRef = args[1] || '';
@@ -43,7 +38,7 @@ if (!previous) previous = safeExec('git rev-parse --abbrev-ref HEAD@{1}');
 // 如果无法解析 previous，保守放行（避免误杀）
 if (!previous) process.exit(0);
 
-// helper: 判断分支在此操作之前是否已存在（有 reflog 历史）
+// 判断分支在此操作之前是否已存在（有 reflog 历史）
 function branchHasHistory(branchName) {
   if (!branchName) return false;
   try {
