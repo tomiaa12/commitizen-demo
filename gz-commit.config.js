@@ -25,6 +25,6 @@ module.exports = {
   // 环境分支列表（这些分支本身不受规则限制，可以直接切换）
   envBranches: ["sit", "uat", "gray", "release"],
 
-  // 其他提示
+  // 提示前缀
   messagePrefix: "[git gz] ",
 };
