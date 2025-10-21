@@ -13,6 +13,7 @@ module.exports = {
 
   // 禁止从哪些分支直接被 checkout -b（派生新分支）
   forbidBranchFromEnv: ["sit", "uat"],
+  autoRollbackOnForbiddenBranchCreation: false, // true = 自动回退并删除新分支；false = 仅警告并阻止
 
   // 允许的分支名前缀（如果 branch 名不以这些前缀开始，则禁止 push）
   // 空则表示不强制命名规范
@@ -22,5 +23,5 @@ module.exports = {
   bypassUsers: ["ci-bot@example.com"],
 
   // 其他提示
-  messagePrefix: "[git-policy] ",
+  messagePrefix: "[git-gz] ",
 };
