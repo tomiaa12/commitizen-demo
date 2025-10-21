@@ -19,8 +19,8 @@ module.exports = {
   // 规则数组，每项是 { from: [源分支模式], newBranch: [新分支名模式] }
   // 当从 from 中的分支尝试创建符合 newBranch 模式的新分支时会被阻止
   forbidBranchCreation: [
-    { from: ["sit"], newBranch: [/.*/] }, // sit 不允许派生任何新分支
-    { from: ["uat", "gray"], newBranch: [/^((?!.*(uat|gray)$).*)$/] }, // uat/gray 只能派生以 uat/gray 结尾的分支
+    { from: ["sit"], newBranch: [/.*/], msg: "不允许从 sit 分支派生新分支" }, // sit 不允许派生任何新分支
+    { from: ["uat", "gray"], newBranch: [/^((?!.*(uat|gray)$).*)$/], msg: "从 uat/gray 分支派生新分支时，必须以 uat/gray 结尾" }, // uat/gray 只能派生以 uat/gray 结尾的分支
   ],
 
   // 环境分支列表（这些分支本身不受规则限制，可以直接切换）

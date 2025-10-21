@@ -79,6 +79,7 @@ if (isCurrentEnv) {
 for (const rule of forbidCreation) {
   const fromPatterns = rule.from || [];
   const newBranchPatterns = rule.newBranch || [];
+  const msg = rule.msg || "";
   
   // 检查来源分支是否匹配 from 模式
   const fromMatch = fromPatterns.some((pattern) => {
@@ -100,8 +101,7 @@ for (const rule of forbidCreation) {
   
   if (newBranchMatch) {
     // 匹配到禁止规则，拒绝创建
-    const msg = `${msgPrefix}拒绝：不允许从分支 "${previous}" 派生新分支 "${current}"（违反分支创建策略）。`;
-    console.error(msg);
+    console.error(`${msgPrefix}拒绝：${msg}`);
     try {
       console.error(`${msgPrefix}正在回退到 "${previous}"`);
       safeExec(`git checkout ${previous}`);
