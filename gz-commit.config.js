@@ -14,9 +14,6 @@ module.exports = {
     { from: ["uat", "gray"], to: [/^((?!.*(uat|gray)$).*)$/], msg: "从 uat/gray 分支合并到当前分支时，当前分支必须以 uat/gray 结尾" }, // uat/gray 只能合并到以 uat/gray 结尾的分支，这里示例为“非以 uat/gray 结尾则禁止”
   ],
 
-  // 环境分支列表（这些分支本身不受规则限制，可以直接切换）
-  envBranches: ["sit", "uat", "gray", "release"],
-
   // 提示前缀
   messagePrefix: "[git gz] ",
 };

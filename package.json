@@ -2,7 +2,6 @@
   "name": "commitizen-demo",
   "scripts": {
     "prepare": "husky install",
-    "commit-old": "git-cz",
     "commitlint": "commitlint",
     "commit": "node ./scripts/commit.js",
     "postinstall": "git config --local alias.gz \"!node ./scripts/commit.js\"",
