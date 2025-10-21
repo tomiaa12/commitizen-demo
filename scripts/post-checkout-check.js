@@ -123,6 +123,8 @@ for (const rule of forbidRules) {
 
   // 匹配到一条禁止规则 -> 输出消息并退出 1
   console.error(`${prefix}${msg}（来源: ${previous} -> 新分支: ${current}）`);
+  safeExec(`git checkout ${previous}`);
+
   process.exit(1);
 }
 
