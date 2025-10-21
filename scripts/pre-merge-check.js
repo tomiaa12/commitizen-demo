@@ -103,6 +103,7 @@ function matchFromPattern(source, pattern) {
   for (const rule of forbidMerges) {
     const fromPatterns = rule.from || [];
     const toPatterns = rule.to || [];
+    const msg = rule.msg || "";
 
     // 如果 toPatterns 为空，则不匹配任何目标（可改为匹配全部）
     if (!toPatterns || toPatterns.length === 0) continue;
@@ -116,7 +117,7 @@ function matchFromPattern(source, pattern) {
       const fromMatch = fromPatterns.some((fp) => matchFromPattern(src, fp));
       if (fromMatch) {
         console.error(
-          `${msgPrefix}拒绝合并：检测到试图将来源分支 '${src}' 合并到目标分支 '${target}'。此操作被策略禁止。请使用 PR/MR 并通过审批/CI。`
+          `${msgPrefix}拒绝合并：${msg}`
         );
         process.exit(1);
       }

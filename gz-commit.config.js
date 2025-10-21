@@ -2,7 +2,6 @@
 module.exports = {
   // 不能被直接 push 的目标分支（不能把本地改动直接 push 到这些远端分支）
   forbidDirectPush: ["release"],
-
   // 允许的分支名前缀（如果 branch 名不以这些前缀开始，则禁止 push）
   allowedBranchPrefixes: ["feat/", "hotfix/", "bugfix/", "fix/"],
 
@@ -11,8 +10,8 @@ module.exports = {
   forbidMerges: [
     // { from: ["uat"], to: ["develop","main"] } // 示例
 
-    { from: ["sit"], to: [/.*/] }, // sit 禁合并到所有分支
-    { from: ["uat", "gray"], to: [/^((?!.*(uat|gray)$).*)$/] }, // uat/gray 只能合并到以 uat/gray 结尾的分支，这里示例为“非以 uat/gray 结尾则禁止”
+    { from: ["sit"], to: [/.*/], msg: "不允许从 sit 分支合并到当前分支" }, // sit 禁合并到所有分支
+    { from: ["uat", "gray"], to: [/^((?!.*(uat|gray)$).*)$/], msg: "从 uat/gray 分支合并到当前分支时，当前分支必须以 uat/gray 结尾" }, // uat/gray 只能合并到以 uat/gray 结尾的分支，这里示例为“非以 uat/gray 结尾则禁止”
   ],
 
   // 禁止从哪些分支直接被 checkout -b（派生新分支）

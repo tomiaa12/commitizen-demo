@@ -103,7 +103,6 @@ for (const rule of forbidCreation) {
     // 匹配到禁止规则，拒绝创建
     console.error(`${msgPrefix}拒绝：${msg}`);
     try {
-      console.error(`${msgPrefix}正在回退到 "${previous}"`);
       safeExec(`git checkout ${previous}`);
     } catch (e) {
       console.error(`${msgPrefix}回退失败: ${e.message || e}`);
