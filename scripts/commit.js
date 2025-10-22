@@ -51,11 +51,11 @@ function inferTicketFromBranch(branch) {
       console.log(`当前分支: ${branch}`);
       console.log(
         `已推断默认 type: ${inferredType}${
-          inferredTicket ? `，默认 issue id: ${inferredTicket}` : ""
+          inferredTicket ? `，默认 id: ${inferredTicket}` : ""
         }`
       );
     } else {
-      console.log("未能检测到当前分支，type 默认将使用 feat，issue id 为空");
+      // console.log("未能检测到当前分支，type 默认将使用 feat，issue id 为空");
     }
 
     const { type } = await inquirer.prompt([
