@@ -3,7 +3,7 @@ module.exports = {
   extends: ['@commitlint/config-conventional'],
   rules: {
     // 限制 type，必选
-    'type-enum': [2, 'always', ['feat','fix','docs','chore','refactor','perf','test','revert']],
+    'type-enum': [2, 'always', ['feat','fix','perf','style','docs','refactor','test','build','ci','chore','revert',]],
     // subject 不能为空
     'subject-empty': [2, 'never'],
     // header 的最大长度（可选）

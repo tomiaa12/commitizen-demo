@@ -16,13 +16,13 @@ Git 分支与提交管理工具，提供分支合并、推送规则校验，以�
 首先，确保项目中安装了必要的依赖：
 
 ```bash
-npm install --save-dev husky@^8.0.0 commitlint@^17 @commitlint/config-conventional@^17 @tomiaa/git-gz
+npm install --save-dev @tomiaa/git-gz husky@^8.0.0 commitlint@^17 @commitlint/config-conventional@^17 
 ```
 
 或者使用 yarn：
 
 ```bash
-yarn add --dev husky@^8.0.0 commitlint@^17 @commitlint/config-conventional@^17 @tomiaa/git-gz
+yarn add --dev @tomiaa/git-gz husky@^8.0.0 commitlint@^17 @commitlint/config-conventional@^17 
 ```
 
 ### 2. 自动初始化

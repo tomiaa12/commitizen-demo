@@ -3,7 +3,7 @@ module.exports = {
   // 不能被直接 push 的目标分支（不能把本地改动直接 push 到这些远端分支）
   forbidDirectPush: ["release"],
   // 允许的分支名前缀（如果 branch 名不以这些前缀开始，则禁止 push）
-  allowedBranchPrefixes: ["feat/", "hotfix/", "bugfix/", "fix/"],
+  allowedBranchPrefixes: ['feat/','fix/','perf/','style/','docs/','refactor/','test/','build/','ci/','chore/','revert/',],
 
   // 禁止合并规则：数组项每项是 { from: [srcPatterns], to: [dstPatterns] }
   // 当本地试图把源分支 from 合并到目标分支 to 时会被阻止

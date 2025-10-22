@@ -1,6 +1,6 @@
 {
   "name": "@tomiaa/git-gz",
-  "version": "0.0.1-beta.5",
+  "version": "0.0.1-beta.7",
   "description": "Install husky hooks and project templates for gz-commit checks",
   "main": "scripts/post-merge-check.js",
   "bin": {
@@ -12,9 +12,7 @@
     "templates/"
   ],
   "scripts": {
-    "postinstall": "node ./scripts/install.js",
-    "prepublishOnly": "echo '准备发布 @tomiaa/git-gz' && npm run test:bin",
-    "test:bin": "node ./bin/cli.js --version"
+    "postinstall": "node ./scripts/install.js"
   },
   "peerDependencies": {
     "commitlint": ">=17.8.1",
