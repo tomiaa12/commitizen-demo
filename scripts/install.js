@@ -107,31 +107,51 @@ function writeHook(hookName, scriptName, args) {
   const hookPath = path.join(huskyDir, hookName);
   const argsStr = args ? ' ' + args : '';
   
-  // 根据 husky 版本生成不同格式的 hook
-  let hookContent;
+  // 根据 husky 版本生成不同格式的命令行
+  let commandLine;
   
   if (huskyInfo.major >= 9) {
     // husky v9+ 格式：直接写命令，不需要 shebang 和 husky.sh
-    hookContent = `node "$(git rev-parse --show-toplevel)/node_modules/${pkgName}/scripts/${scriptName}"${argsStr}
-`;
+    commandLine = `node "$(git rev-parse --show-toplevel)/node_modules/${pkgName}/scripts/${scriptName}"${argsStr}`;
   } else {
-    // husky v8 格式：需要 shebang 和 husky.sh
-    hookContent = `#!/usr/bin/env sh
+    // husky v8 格式：只需命令行部分
+    commandLine = `node "$(git rev-parse --show-toplevel)/node_modules/${pkgName}/scripts/${scriptName}"${argsStr}`;
+  }
+
+  // 如果文件已存在，检查是否需要追加
+  if (fs.existsSync(hookPath)) {
+    const existingContent = fs.readFileSync(hookPath, 'utf8');
+    
+    // 检查命令是否已存在
+    if (existingContent.includes(commandLine)) {
+      log(`${hookName} hook 已包含该命令，跳过`);
+      return;
+    }
+    
+    // 追加到文件末尾
+    const appendContent = existingContent.endsWith('\n') ? `${commandLine}\n` : `\n${commandLine}\n`;
+    fs.appendFileSync(hookPath, appendContent, { encoding: 'utf8' });
+    log(`${hookName} hook 已追加命令到现有文件 .husky/${hookName}`);
+  } else {
+    // 文件不存在，创建新文件
+    let hookContent;
+    
+    if (huskyInfo.major >= 9) {
+      // husky v9+ 格式：直接写命令，不需要 shebang 和 husky.sh
+      hookContent = `${commandLine}\n`;
+    } else {
+      // husky v8 格式：需要 shebang 和 husky.sh
+      hookContent = `#!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-node "$(git rev-parse --show-toplevel)/node_modules/${pkgName}/scripts/${scriptName}"${argsStr}
+${commandLine}
 `;
+    }
+    
+    fs.writeFileSync(hookPath, hookContent, { encoding: 'utf8' });
+    try { fs.chmodSync(hookPath, 0o755); } catch(e) { /* windows may ignore */ }
+    log(`${hookName} hook 已写入 .husky/${hookName} (husky v${huskyInfo.major} 格式)`);
   }
-
-  if (fs.existsSync(hookPath)) {
-    const bak = hookPath + '.bak-' + Date.now();
-    fs.copyFileSync(hookPath, bak);
-    log(`${hookName} 已存在，备份为 ${path.relative(repoRoot, bak)}`);
-  }
-
-  fs.writeFileSync(hookPath, hookContent, { encoding: 'utf8' });
-  try { fs.chmodSync(hookPath, 0o755); } catch(e) { /* windows may ignore */ }
-  log(`${hookName} hook 已写入 .husky/${hookName} (husky v${huskyInfo.major} 格式)`);
 }
 
 // 写入所有配置的 hooks
@@ -147,13 +167,7 @@ function copyIfNotExist(srcName, dstName) {
     fs.copyFileSync(src, dst);
     log(`${dstName} 已写入到项目根（来自模板）`);
   } else {
-    const local = dst + '.local';
-    if (!fs.existsSync(local)) {
-      fs.copyFileSync(src, local);
-      log(`${dstName} 已存在，模板写入为 ${path.basename(local)}，请手动合并`);
-    } else {
-      log(`${dstName} 与 ${path.basename(local)} 已存在，未覆盖`);
-    }
+    // log(`${dstName} 已存在，跳过覆盖`);
   }
 }
 
