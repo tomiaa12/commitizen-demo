@@ -1,6 +1,6 @@
 {
   "name": "@tomiaa/git-gz",
-  "version": "0.0.1-beta.8",
+  "version": "0.0.1-beta.9",
   "description": "Install husky hooks and project templates for gz-commit checks",
   "main": "scripts/post-merge-check.js",
   "bin": {
@@ -8,16 +8,16 @@
   },
   "files": [
     "bin/",
-    "scripts/",
-    "templates/"
+    "scripts/"
   ],
   "scripts": {
+    "test": "node ./scripts/install.js",
     "postinstall": "node ./scripts/install.js"
   },
   "peerDependencies": {
-    "commitlint": ">=17.8.1",
     "@commitlint/config-conventional": "^17.0.0",
     "commitizen": "^4.3.1",
+    "commitlint": ">=17.8.1",
     "husky": ">=8.0.0"
   },
   "keywords": [
@@ -45,5 +45,11 @@
     "cz-customizable": "^7.5.1",
     "execa": "^7",
     "inquirer": "^7"
+  },
+  "devDependencies": {
+    "@commitlint/config-conventional": "^17.8.0",
+    "commitlint": "^17.8.0",
+    "commitizen": "^4.3.1",
+    "husky": "^8.0.0"
   }
 }

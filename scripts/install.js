@@ -28,12 +28,13 @@ if (!repoRoot) {
 // package info
 const pkgRoot = path.resolve(__dirname, '..');
 let pkgName = '@tomiaa/git-gz';
+let pkgJson = {}
 try {
-  const pkgJson = require(path.join(pkgRoot, 'package.json'));
+  pkgJson = require(path.join(pkgRoot, 'package.json'));
   if (pkgJson && pkgJson.name) pkgName = pkgJson.name;
 } catch(e) { /* ignore */ }
 
-const templatesDir = path.join(pkgRoot, 'templates');
+const templatesDir = path.join(pkgRoot);
 const huskyDir = path.join(repoRoot, '.husky');
 
 // 确保 .husky 目录存在
@@ -102,22 +103,19 @@ const hooks = [
   }
 ];
 
+
+const isDev = pkgJson.name == '@tomiaa/git-gz';
 // 写入所有 hooks
 function writeHook(hookName, scriptName, args) {
   const hookPath = path.join(huskyDir, hookName);
   const argsStr = args ? ' ' + args : '';
   
   // 根据 husky 版本生成不同格式的命令行
-  let commandLine;
-  
-  if (huskyInfo.major >= 9) {
-    // husky v9+ 格式：直接写命令，不需要 shebang 和 husky.sh
-    commandLine = `node "$(git rev-parse --show-toplevel)/node_modules/${pkgName}/scripts/${scriptName}"${argsStr}`;
-  } else {
-    // husky v8 格式：只需命令行部分
-    commandLine = `node "$(git rev-parse --show-toplevel)/node_modules/${pkgName}/scripts/${scriptName}"${argsStr}`;
-  }
+  let commandLine = `node "$(git rev-parse --show-toplevel)/node_modules/${pkgName}/scripts/${scriptName}"${argsStr}`;
 
+  if(isDev) {
+    commandLine = `node "$(git rev-parse --show-toplevel)/scripts/${scriptName}"${argsStr}`;
+  }
   // 如果文件已存在，检查是否需要追加
   if (fs.existsSync(hookPath)) {
     const existingContent = fs.readFileSync(hookPath, 'utf8');
@@ -167,7 +165,7 @@ function copyIfNotExist(srcName, dstName) {
     fs.copyFileSync(src, dst);
     log(`${dstName} 已写入到项目根（来自模板）`);
   } else {
-    // log(`${dstName} 已存在，跳过覆盖`);
+    log(`${dstName} 已存在，跳过覆盖`);
   }
 }
 
