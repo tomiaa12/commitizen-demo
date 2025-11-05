@@ -1,6 +1,6 @@
 {
   "name": "@tomiaa/git-gz",
-  "version": "0.0.1-beta.10",
+  "version": "0.0.1-beta.11",
   "description": "Install husky hooks and project templates for gz-commit checks",
   "main": "scripts/post-merge-check.js",
   "bin": {
@@ -32,12 +32,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/tomiaa/git-gz.git"
+    "url": "https://github.com/tomiaa12/git-gz.git"
   },
   "bugs": {
-    "url": "https://github.com/tomiaa/git-gz/issues"
+    "url": "https://github.com/tomiaa12/git-gz/issues"
   },
-  "homepage": "https://github.com/tomiaa/git-gz#readme",
+  "homepage": "https://github.com/tomiaa12/git-gz#readme",
   "author": "",
   "license": "MIT",
   "dependencies": {
