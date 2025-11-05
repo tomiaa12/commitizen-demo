@@ -104,7 +104,7 @@ const hooks = [
 ];
 
 
-const isDev = pkgJson.name == '@tomiaa/git-gz';
+const isDev = path.basename(path.dirname(path.dirname(pkgRoot))) !== 'node_modules'
 // 写入所有 hooks
 function writeHook(hookName, scriptName, args) {
   const hookPath = path.join(huskyDir, hookName);

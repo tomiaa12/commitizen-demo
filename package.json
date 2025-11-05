@@ -1,6 +1,6 @@
 {
   "name": "@tomiaa/git-gz",
-  "version": "0.0.1-beta.9",
+  "version": "0.0.1-beta.10",
   "description": "Install husky hooks and project templates for gz-commit checks",
   "main": "scripts/post-merge-check.js",
   "bin": {
